@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
+from django import forms
 
 from yatube.settings import ITEMS_PER_PAGE
 
@@ -83,6 +84,73 @@ class PostViewsTest(TestCase):
         other_group_url = reverse('posts:group_posts', args=[other_group.slug])
         response = self.authorized_client.get(other_group_url)
         self.assertNotIn(self.post, response.context['page_obj'])
+
+    # Проверка передаваемого контекста
+    def test_index_page_uses_correct_context(self):
+        """Шаблон главной страницы сформирован с правильным контекстом."""
+        response = self.authorized_client.get(reverse('posts:index'))
+        index_post = response.context['page_obj'][0]
+        self.assertEqual(self.post.text, index_post.text)
+        self.assertEqual(self.post.author, index_post.author)
+        self.assertEqual(self.post.group, index_post.group)
+
+    def test_profile_page_uses_correct_context(self):
+        """Шаблон страницы пользователя сформирован с правильным контекстом."""
+        profile_page = reverse('posts:profile',
+                               args=[PostViewsTest.test_user.username])
+        response = self.authorized_client.get(profile_page)
+        profile_post_count = response.context.get('count_user_posts')
+        profile_post_title = response.context.get('title')
+        profile_post = response.context['page_obj'][0]
+        self.assertEqual(self.post.author, profile_post.author)
+        self.assertEqual(self.post.text, profile_post.text)
+        self.assertEqual(self.post.group, profile_post.group)
+        self.assertEqual(1, profile_post_count)
+        self.assertEqual(self.post.author.username, profile_post_title)
+
+    def test_group_page_uses_correct_context(self):
+        """Шаблон страницы группы сформирован с правильным контекстом."""
+        group_page = reverse('posts:group_posts',
+                             args=[PostViewsTest.group.slug])
+        response = self.authorized_client.get(group_page)
+        response_group = response.context.get('group')
+        response_post = response.context['page_obj'][0]
+        self.assertEqual(self.post.author, response_post.author)
+        self.assertEqual(self.group, response_post.group)
+        self.assertEqual(self.post.text, response_post.text)
+        self.assertEqual(self.test_user, response_post.author)
+        self.assertEqual(self.group.title, response_group.title)
+        self.assertEqual(self.group.description, response_group.description)
+        self.assertEqual(self.group.slug, response_group.slug)
+
+    def test_post_detail_page_uses_correct_context(self):
+        """Шаблон страницы поста сформирован с правильным контекстом."""
+        post_detail_page = reverse('posts:post_detail',
+                                   args=[PostViewsTest.post.id])
+        response = self.authorized_client.get(post_detail_page)
+        response_post = response.context.get('post')
+        response_count = response.context.get('count')
+        self.assertEqual(self.post.author, response_post.author)
+        self.assertEqual(self.post.group, response_post.group)
+        self.assertEqual(self.post.text, response_post.text)
+        self.assertEqual(1, response_count)
+        self.assertEqual(self.post, response_post)
+
+    def test_create_and_edit_post_pages_use_correct_context(self):
+        """Шаблоны страниц создания и редактирования поста
+        сформированы с правильным контекстом."""
+        url_pages = [reverse('posts:post_edit', args=[PostViewsTest.post.id]),
+                     reverse('posts:post_create')]
+        for url in url_pages:
+            response = self.authorized_client.get(url)
+            form_fields = {
+                'text': forms.fields.CharField,
+                'group': forms.models.ModelChoiceField,
+            }
+            for value, expected in form_fields.items():
+                with self.subTest(value=value):
+                    form_field = response.context.get('form').fields.get(value)
+                    self.assertIsInstance(form_field, expected)
 
 
 class PaginatorViewsTest(TestCase):
