@@ -39,11 +39,15 @@ class PostURLTest(TestCase):
         """Проверка кодов ответа страниц неавторизованному пользователю."""
         status_codes = {
             reverse('posts:index'): HTTPStatus.OK,
-            reverse('posts:group_posts', args=[PostURLTest.group.slug]): HTTPStatus.OK,
-            reverse('posts:profile', args=[PostURLTest.test_user.username]): HTTPStatus.OK,
-            reverse('posts:post_detail', args=[PostURLTest.post.id]): HTTPStatus.OK,
+            reverse('posts:group_posts',
+                    args=[PostURLTest.group.slug]): HTTPStatus.OK,
+            reverse('posts:profile',
+                    args=[PostURLTest.test_user.username]): HTTPStatus.OK,
+            reverse('posts:post_detail',
+                    args=[PostURLTest.post.id]): HTTPStatus.OK,
             reverse('posts:post_create'): HTTPStatus.FOUND,
-            reverse('posts:post_edit', args=[PostURLTest.post.id]): HTTPStatus.FOUND,
+            reverse('posts:post_edit',
+                    args=[PostURLTest.post.id]): HTTPStatus.FOUND,
         }
         for page, status_code in status_codes.items():
             with self.subTest(status_code=status_code):
@@ -55,11 +59,15 @@ class PostURLTest(TestCase):
         """Проверка кодов ответа страниц авторизованному пользователю."""
         status_codes = {
             reverse('posts:index'): HTTPStatus.OK,
-            reverse('posts:group_posts', args=[PostURLTest.group.slug]): HTTPStatus.OK,
-            reverse('posts:profile', args=[PostURLTest.test_user.username]): HTTPStatus.OK,
-            reverse('posts:post_detail', args=[PostURLTest.post.id]): HTTPStatus.OK,
+            reverse('posts:group_posts',
+                    args=[PostURLTest.group.slug]): HTTPStatus.OK,
+            reverse('posts:profile',
+                    args=[PostURLTest.test_user.username]): HTTPStatus.OK,
+            reverse('posts:post_detail',
+                    args=[PostURLTest.post.id]): HTTPStatus.OK,
             reverse('posts:post_create'): HTTPStatus.OK,
-            reverse('posts:post_edit', args=[PostURLTest.post.id]): HTTPStatus.OK,
+            reverse('posts:post_edit',
+                    args=[PostURLTest.post.id]): HTTPStatus.OK,
         }
         for page, status_code in status_codes.items():
             with self.subTest(status_code=status_code):
@@ -77,10 +85,16 @@ class PostURLTest(TestCase):
         """URL-адрес использует корректный шаблон."""
         templates_url_names = {
             'posts/index.html': reverse('posts:index'),
-            'posts/group_list.html': reverse('posts:group_posts', args=[PostURLTest.group.slug]),
-            'posts/profile.html': reverse('posts:profile', args=[PostURLTest.test_user.username]),
-            'posts/post_detail.html': reverse('posts:post_detail', args=[PostURLTest.post.id]),
-            'posts/create_post.html': reverse('posts:post_edit', args=[PostURLTest.post.id]),
+            'posts/group_list.html':
+                reverse('posts:group_posts', args=[PostURLTest.group.slug]),
+            'posts/profile.html':
+                reverse(
+                    'posts:profile',
+                    args=[PostURLTest.test_user.username]),
+            'posts/post_detail.html':
+                reverse('posts:post_detail', args=[PostURLTest.post.id]),
+            'posts/create_post.html':
+                reverse('posts:post_edit', args=[PostURLTest.post.id]),
             'posts/create_post.html': reverse('posts:post_create'),
         }
         for template, adress in templates_url_names.items():
