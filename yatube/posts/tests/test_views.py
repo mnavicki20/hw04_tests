@@ -37,10 +37,15 @@ class PostViewsTest(TestCase):
         """URL-адрес использует корректный шаблон."""
         templates_pages_names = {
             'posts/index.html': reverse('posts:index'),
-            'posts/group_list.html': reverse('posts:group_posts', args=[PostViewsTest.group.slug]),
-            'posts/profile.html': reverse('posts:profile', args=[PostViewsTest.test_user.username]),
-            'posts/post_detail.html': reverse('posts:post_detail', args=[PostViewsTest.post.id]),
-            'posts/create_post.html': reverse('posts:post_edit', args=[PostViewsTest.post.id]),
+            'posts/group_list.html':
+                reverse('posts:group_posts', args=[PostViewsTest.group.slug]),
+            'posts/profile.html':
+                reverse('posts:profile',
+                        args=[PostViewsTest.test_user.username]),
+            'posts/post_detail.html':
+                reverse('posts:post_detail', args=[PostViewsTest.post.id]),
+            'posts/create_post.html':
+                reverse('posts:post_edit', args=[PostViewsTest.post.id]),
             'posts/create_post.html': reverse('posts:post_create'),
         }
         for template, reverse_name in templates_pages_names.items():
