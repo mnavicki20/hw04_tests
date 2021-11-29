@@ -18,11 +18,6 @@ class PostURLTest(TestCase):
             email='testmail@gmail.com',
             password='Qwerty123',
         )
-        cls.another_user = User.objects.create(
-            username='another_username',
-            email='anothermail@gmail.com',
-            password='321ytrewQ',
-        )
         cls.group = Group.objects.create(
             title='Тестовый заголовок',
             slug='test-group',
