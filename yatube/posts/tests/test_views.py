@@ -1,11 +1,11 @@
+from django import forms
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-from django import forms
 
 from yatube.settings import ITEMS_PER_PAGE
 
-from ..models import Post, Group
+from ..models import Group, Post
 
 User = get_user_model()
 
