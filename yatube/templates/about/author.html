@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Об авторе проекта
+{% endblock %}
+
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-10 p-3">
+      <h4>
+        Привет, меня зовут Никита Новицкий!<br>Я автор этого тренировочного проекта Yatube.
+      </h4>
+      </p>
+      <p>
+        <img src="{% static "img/profile_view.jpg" %}" width="320" height="258" class="d-inline-block align-top" alt="">
+      </p>
+      <p>Мне 30 лет, я живу в г. Минск, Беларусь. В данный момент я работаю экономистом в
+        финансовом отделе мобильного оператора. Обожаю играть в мини-футбол, учусь играть на гитаре.
+        С сентября 2021 записался на курс бэкенд-разработки на языке Python в надежде, что из этого
+        что-нибудь в итоге получится. Прямо в данный момент обучение даётся непросто, но хочется верить,
+        что оно завершится для меня удачно. Планирую по окончании обучения сменить сферу рабочей деятельности,
+        а в последствие и страну проживания. Именно это и является основным стимулом прохождения курса.
+      </p>
+      <ul>
+        <i>Мои контакты:</i>
+        <li>cсылка на мой аккаунт в Github: <a href="https://github.com/mnavicki20" target="_blank">https://github.com/mnavicki20</a></li>
+        <li>cсылка на мой профиль в Linkedin: <a href="https://www.linkedin.com/in/mnavicki/" target="_blank">https://www.linkedin.com/in/mnavicki/</a></li>
+        <li>cсылка на мой контакт в Telegram: <a href="https://t.me/mnavicki20" target="_blank">https://t.me/mnavicki20</a></li>
+        <li>cсылка на мой профиль в Instagram: <a href="https://www.instagram.com/mnavicki20/" target="_blank">https://www.instagram.com/mnavicki20/</a></li>
+      </ul>
+    </div>
+  </div>
+{% endblock %}
