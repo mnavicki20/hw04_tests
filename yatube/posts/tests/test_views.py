@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 
+from yatube.settings import ITEMS_PER_PAGE
+
 from ..models import Post, Group
 
 User = get_user_model()
@@ -81,3 +83,50 @@ class PostViewsTest(TestCase):
         other_group_url = reverse('posts:group_posts', args=[other_group.slug])
         response = self.authorized_client.get(other_group_url)
         self.assertNotIn(self.post, response.context['page_obj'])
+
+
+class PaginatorViewsTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.test_user = User.objects.create(
+            username='test_username',
+            email='testmail@gmail.com',
+            password='Qwerty123',
+        )
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.test_user)
+        cls.group = Group.objects.create(
+            title='Тестовый заголовок',
+            slug='test-group',
+            description='Тестовое описание',
+        )
+        for item in range(13):
+            cls.post = Post.objects.create(
+                author=cls.test_user,
+                group=cls.group,
+                text=f'Тестовый текст поста номер {item}',
+            )
+
+    def test_paginator_for_index_profile_group(self):
+        """Паджинатор на страницах index, profile, group работает корректно."""
+        first_page_len = ITEMS_PER_PAGE
+        second_page_len = Post.objects.count() - ITEMS_PER_PAGE
+        context = {
+            reverse('posts:index'): first_page_len,
+            reverse('posts:index') + '?page=2': second_page_len,
+            reverse('posts:group_posts', args=[PaginatorViewsTest.group.slug]):
+            first_page_len,
+            reverse('posts:group_posts', args=[PaginatorViewsTest.group.slug])
+            + '?page=2': second_page_len,
+            reverse('posts:profile',
+                    args=[PaginatorViewsTest.test_user.username]):
+            first_page_len,
+            reverse('posts:profile',
+                    args=[PaginatorViewsTest.test_user.username]) + '?page=2':
+            second_page_len,
+        }
+        for requested_page, page_len in context.items():
+            with self.subTest(requested_page=requested_page):
+                response = self.authorized_client.get(requested_page)
+                self.assertEqual(len(response.context['page_obj']), page_len)
