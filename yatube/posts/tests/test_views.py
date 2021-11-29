@@ -52,3 +52,20 @@ class PostViewsTest(TestCase):
             with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)
+
+    # Проверка отражения поста при указании группы
+    # на страницах index, group, profile
+    def test_new_post_appears_on_pages(self):
+        """Новый пост отображается на страницах index, group, profile"""
+        expected_context = self.post
+        urls_pages = [
+            reverse('posts:index'),
+            reverse('posts:group_posts', args=[PostViewsTest.group.slug]),
+            reverse('posts:profile', args=[PostViewsTest.test_user.username]),
+        ]
+        for url in urls_pages:
+            with self.subTest(url=url):
+                response = self.authorized_client.get(url)
+                self.assertEqual(len(response.context['page_obj']), 1)
+                current_context = response.context['page_obj'][0]
+                self.assertEqual(current_context, expected_context)
