@@ -79,7 +79,7 @@ class PostEditFormTests(TestCase):
             'author': self.authorized_client,
         }
         response = self.authorized_client.post(
-            reverse('posts:post_edit', kwargs={'post_id': self.post.id,}),
+            reverse('posts:post_edit', kwargs={'post_id': self.post.id, }),
             data=form_data,
             follow=True,
         )
