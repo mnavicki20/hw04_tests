@@ -69,3 +69,15 @@ class PostViewsTest(TestCase):
                 self.assertEqual(len(response.context['page_obj']), 1)
                 current_context = response.context['page_obj'][0]
                 self.assertEqual(current_context, expected_context)
+
+    # Проверка того, что пост не попал не в свою группу
+    def test_new_post_does_not_appear_in_other_group(self):
+        """Новый пост не отображается не в свойе группе."""
+        other_group = Group.objects.create(
+            title='Другой тестовый заголовок',
+            slug='other-test-group',
+            description='Другое тестовое описание',
+        )
+        other_group_url = reverse('posts:group_posts', args=[other_group.slug])
+        response = self.authorized_client.get(other_group_url)
+        self.assertNotIn(self.post, response.context['page_obj'])
