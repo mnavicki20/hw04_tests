@@ -39,19 +39,19 @@ class PostViewsTest(TestCase):
     def test_pages_use_correct_templates(self):
         """URL-адрес использует корректный шаблон."""
         templates_pages_names = {
-            'posts/index.html': reverse('posts:index'),
-            'posts/group_list.html':
-                reverse('posts:group_posts', args=[PostViewsTest.group.slug]),
-            'posts/profile.html':
-                reverse('posts:profile',
-                        args=[PostViewsTest.test_user.username]),
-            'posts/post_detail.html':
-                reverse('posts:post_detail', args=[PostViewsTest.post.id]),
-            'posts/create_post.html':
-                reverse('posts:post_edit', args=[PostViewsTest.post.id]),
-            'posts/create_post.html': reverse('posts:post_create'),
+            reverse('posts:index'): 'posts/index.html',
+            reverse('posts:group_posts', args=[PostViewsTest.group.slug]):
+            'posts/group_list.html',
+            reverse('posts:profile',
+                    args=[PostViewsTest.test_user.username]):
+            'posts/profile.html',
+            reverse('posts:post_detail', args=[PostViewsTest.post.id]):
+            'posts/post_detail.html',
+            reverse('posts:post_edit', args=[PostViewsTest.post.id]):
+            'posts/create_post.html',
+            reverse('posts:post_create'): 'posts/create_post.html',
         }
-        for template, reverse_name in templates_pages_names.items():
+        for reverse_name, template in templates_pages_names.items():
             with self.subTest(reverse_name=reverse_name):
                 response = self.authorized_client.get(reverse_name)
                 self.assertTemplateUsed(response, template)

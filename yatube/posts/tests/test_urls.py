@@ -84,20 +84,19 @@ class PostURLTest(TestCase):
     def test_urls_use_correct_template(self):
         """URL-адрес использует корректный шаблон."""
         templates_url_names = {
-            'posts/index.html': reverse('posts:index'),
-            'posts/group_list.html':
-                reverse('posts:group_posts', args=[PostURLTest.group.slug]),
-            'posts/profile.html':
-                reverse(
-                    'posts:profile',
-                    args=[PostURLTest.test_user.username]),
-            'posts/post_detail.html':
-                reverse('posts:post_detail', args=[PostURLTest.post.id]),
-            'posts/create_post.html':
-                reverse('posts:post_edit', args=[PostURLTest.post.id]),
-            'posts/create_post.html': reverse('posts:post_create'),
+            reverse('posts:index'): 'posts/index.html',
+            reverse('posts:group_posts', args=[PostURLTest.group.slug]):
+            'posts/group_list.html',
+            reverse('posts:profile',
+                    args=[PostURLTest.test_user.username]):
+            'posts/profile.html',
+            reverse('posts:post_detail', args=[PostURLTest.post.id]):
+            'posts/post_detail.html',
+            reverse('posts:post_edit', args=[PostURLTest.post.id]):
+            'posts/create_post.html',
+            reverse('posts:post_create'): 'posts/create_post.html',
         }
-        for template, adress in templates_url_names.items():
+        for adress, template in templates_url_names.items():
             with self.subTest(adress=adress):
                 response = self.authorized_client.get(adress)
                 self.assertTemplateUsed(response, template)
