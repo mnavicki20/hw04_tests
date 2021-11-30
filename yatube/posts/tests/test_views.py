@@ -169,12 +169,14 @@ class PaginatorViewsTest(TestCase):
             slug='test-group',
             description='Тестовое описание',
         )
-        for item in range(13):
-            cls.post = Post.objects.create(
+        cls.post = Post.objects.bulk_create([
+            Post(
                 author=cls.test_user,
                 group=cls.group,
                 text=f'Тестовый текст поста номер {item}',
             )
+            for item in range(13)
+        ])
 
     def test_paginator_for_index_profile_group(self):
         """Паджинатор на страницах index, profile, group работает корректно."""
