@@ -6,7 +6,7 @@ from django.urls import reverse
 from ..models import Group, Post, User
 
 
-class PostCreateFormTests(TestCase):
+class PostFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -45,33 +45,13 @@ class PostCreateFormTests(TestCase):
         self.assertEqual(last_post.group.id, form_data['group'])
         self.assertEqual(last_post.author, form_data['author'])
 
-
-class PostEditFormTests(TestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.group = Group.objects.create(
-            title='Тестовый заголовок',
-            slug='test-group',
-            description='Тестовое описание',
-        )
-        cls.test_user = User.objects.create(
-            username='test_username',
-            email='testmail@gmail.com',
-            password='Qwerty123',
-        )
-        cls.post = Post.objects.create(
-            group=cls.group,
-            text='Тестовый текст',
-            author=cls.test_user,
-        )
-
-    def setUp(self):
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.test_user)
-
-    def test_create_post(self):
+    def test_edit_post(self):
         """Отправка валидной формы редактирует публикацию."""
+        post = Post.objects.create(
+            group=self.group,
+            text='Тестовый текст',
+            author=self.test_user,
+        )
         posts_count = Post.objects.count()
         edited_text = 'Отредактированный тестовый текст'
         form_data = {
@@ -80,12 +60,12 @@ class PostEditFormTests(TestCase):
             'author': self.authorized_client,
         }
         response = self.authorized_client.post(
-            reverse('posts:post_edit', kwargs={'post_id': self.post.id, }),
+            reverse('posts:post_edit', kwargs={'post_id': post.id, }),
             data=form_data,
             follow=True,
         )
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertEqual(Post.objects.count(), posts_count)
-        edited_post = Post.objects.get(id=self.post.id)
+        edited_post = Post.objects.get(id=post.id)
         self.assertEqual(edited_post.text, form_data['text'])
         self.assertEqual(edited_post.group.id, form_data['group'])
