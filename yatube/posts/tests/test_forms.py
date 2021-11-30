@@ -31,7 +31,7 @@ class PostCreateFormTests(TestCase):
         form_data = {
             'group': self.group.id,
             'text': 'Тестовый текст',
-            'author': self.authorized_client,
+            'author': self.test_user,
         }
         response = self.authorized_client.post(
             reverse('posts:post_create'),
@@ -43,6 +43,7 @@ class PostCreateFormTests(TestCase):
         last_post = Post.objects.last()
         self.assertEqual(last_post.text, form_data['text'])
         self.assertEqual(last_post.group.id, form_data['group'])
+        self.assertEqual(last_post.author, form_data['author'])
 
 
 class PostEditFormTests(TestCase):
