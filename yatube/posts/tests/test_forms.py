@@ -71,6 +71,7 @@ class PostFormTests(TestCase):
         self.assertEqual(edited_post.group.id, form_data['group'])
 
     def test_guest_client_could_not_create_posts(self):
+        """Проверка невозможности создания поста неавторизованным пользователем."""
         posts_before = Post.objects.count()
         form_data = {
             'group': self.group.id,
