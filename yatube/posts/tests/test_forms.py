@@ -69,3 +69,18 @@ class PostFormTests(TestCase):
         edited_post = Post.objects.get(id=post.id)
         self.assertEqual(edited_post.text, form_data['text'])
         self.assertEqual(edited_post.group.id, form_data['group'])
+
+    def test_guest_client_could_not_create_posts(self):
+        posts_before = Post.objects.count()
+        form_data = {
+            'group': self.group.id,
+            'text': 'Тестовый текст',
+            'author': self.guest_client,
+        }
+        response = self.guest_client.post(
+            reverse('posts:post_create'),
+            data=form_data,
+            follow=True,
+        )
+        self.assertRedirects(response, '/auth/login/?next=/create/')
+        self.assertEqual(Post.objects.count(), posts_before)
