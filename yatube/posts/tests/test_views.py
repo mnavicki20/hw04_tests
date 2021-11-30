@@ -90,9 +90,12 @@ class PostViewsTest(TestCase):
         """Шаблон главной страницы сформирован с правильным контекстом."""
         response = self.authorized_client.get(reverse('posts:index'))
         index_post = response.context['page_obj'][0]
-        self.assertEqual(self.post.text, index_post.text)
-        self.assertEqual(self.post.author, index_post.author)
-        self.assertEqual(self.post.group, index_post.group)
+        self.check_post_context_on_page(index_post)
+
+    def check_post_context_on_page(self, first_object):
+        self.assertEqual(first_object.text, self.post.text)
+        self.assertEqual(first_object.author, self.post.author)
+        self.assertEqual(first_object.group, self.post.group)
 
     def test_profile_page_uses_correct_context(self):
         """Шаблон страницы пользователя сформирован с правильным контекстом."""
@@ -102,9 +105,7 @@ class PostViewsTest(TestCase):
         profile_post_count = response.context.get('count_user_posts')
         profile_post_title = response.context.get('title')
         profile_post = response.context['page_obj'][0]
-        self.assertEqual(self.post.author, profile_post.author)
-        self.assertEqual(self.post.text, profile_post.text)
-        self.assertEqual(self.post.group, profile_post.group)
+        self.check_post_context_on_page(profile_post)
         self.assertEqual(1, profile_post_count)
         self.assertEqual(self.post.author.username, profile_post_title)
 
@@ -115,9 +116,7 @@ class PostViewsTest(TestCase):
         response = self.authorized_client.get(group_page)
         response_group = response.context.get('group')
         response_post = response.context['page_obj'][0]
-        self.assertEqual(self.post.author, response_post.author)
-        self.assertEqual(self.group, response_post.group)
-        self.assertEqual(self.post.text, response_post.text)
+        self.check_post_context_on_page(response_post)
         self.assertEqual(self.test_user, response_post.author)
         self.assertEqual(self.group.title, response_group.title)
         self.assertEqual(self.group.description, response_group.description)
@@ -129,10 +128,8 @@ class PostViewsTest(TestCase):
                                    args=[PostViewsTest.post.id])
         response = self.authorized_client.get(post_detail_page)
         response_post = response.context.get('post')
+        self.check_post_context_on_page(response_post)
         response_count = response.context.get('count')
-        self.assertEqual(self.post.author, response_post.author)
-        self.assertEqual(self.post.group, response_post.group)
-        self.assertEqual(self.post.text, response_post.text)
         self.assertEqual(1, response_count)
         self.assertEqual(self.post, response_post)
 
