@@ -84,5 +84,7 @@ class PostFormTests(TestCase):
             data=form_data,
             follow=True,
         )
-        self.assertRedirects(response, '/auth/login/?next=/create/')
+        expected_redirect = str(reverse('users:login') + '?next='
+                                + reverse('posts:post_create'))
+        self.assertRedirects(response, expected_redirect)
         self.assertEqual(Post.objects.count(), posts_before)
