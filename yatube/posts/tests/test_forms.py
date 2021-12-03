@@ -3,7 +3,7 @@ from http import HTTPStatus
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group, Post, User, Comment
+from ..models import Group, Post, User
 
 
 class PostFormTests(TestCase):
@@ -115,11 +115,9 @@ class CommentFormTests(TestCase):
 
     def test_comments_can_be_created_only_by_authorized_clients(self):
         """Комментировать посты может только авторизованный пользователь."""
-        comments_before = Comment.objects.count()
+        comments_before = self.post.comments.count()
         form_data = {
-            'post': self.post,
             'text': 'Тестовый комментарий к посту',
-            'author': self.guest_client,
         }
         response = self.guest_client.post(
             reverse('posts:add_comment', kwargs={'post_id': self.post.id, }),
@@ -130,10 +128,12 @@ class CommentFormTests(TestCase):
                                 + reverse('posts:add_comment',
                                           kwargs={'post_id': self.post.id, }))
         self.assertRedirects(response, expected_redirect)
-        self.assertEqual(Comment.objects.count(), comments_before)
-        # response = self.authorized_client.post(
-        #     reverse('posts:add_comment', kwargs={'post_id': self.post.id, }),
-        #     data=form_data,
-        #     follow=True,
-        # )
-        # self.assertEqual(Comment.objects.count(), comments_before + 1)
+        self.assertEqual(self.post.comments.count(), comments_before)
+        response = self.authorized_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.id, }),
+            data=form_data,
+            follow=True,
+        )
+        self.assertEqual(self.post.comments.count(), comments_before + 1)
+        last_comment = self.post.comments.last()
+        self.assertEqual(last_comment.text, form_data['text'])

@@ -50,19 +50,19 @@
           {% endif %}
         </article>
         {% if user.is_authenticated %}
-        <div class="card my-4">
-          <h5 class="card-header">Добавить комментарий:</h5>
-          <div class="card-body">
-            <form method="post" action="{% url 'posts:add_comment' post.id %}">
-              {% csrf_token %}      
-              <div class="form-group mb-2">
-                {{ comment_form.text }}
-              </div>
-              <button type="submit" class="btn btn-primary">Отправить</button>
-            </form>
+          <div class="card my-4">
+            <h5 class="card-header">Добавить комментарий:</h5>
+            <div class="card-body">
+              <form method="post" action="{% url 'posts:add_comment' post.id %}">
+                {% csrf_token %}      
+                  <div class="form-group mb-2">
+                    <textarea name="text" cols="40" rows="10" class="form-control" required id={{ comment_form.text }}</textarea>
+                  </div>
+                <button type="submit" class="btn btn-primary">Отправить</button>
+              </form>
+            </div>
           </div>
-        </div>
-      {% endif %}
+        {% endif %}
         {% for comment in comments %}
           <div class="media mb-4">
             <div class="media-body">
@@ -70,7 +70,6 @@
                 <a href="{% url 'posts:profile' comment.author.username %}">
                   {{ comment.author.username }}
                 </a>
-                <p>{{ comment.created }}</p>
               </h5>
                 <p>{{ comment.text }}</p>
             </div>

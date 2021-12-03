@@ -56,14 +56,18 @@ class Group(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(
-        'Post',
+        Post,
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
         related_name='comments',
         verbose_name='Пост, к которому оставлен комментарий',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
+        blank=True,
+        null=True,
         related_name='comments',
         verbose_name='Автор комментария',
     )
