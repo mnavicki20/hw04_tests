@@ -3,7 +3,7 @@ from http import HTTPStatus
 from django.test import Client, TestCase
 from django.urls import reverse
 
-from ..models import Group, Post, User
+from ..models import Group, Post, User, Comment
 
 
 class PostFormTests(TestCase):
@@ -88,3 +88,52 @@ class PostFormTests(TestCase):
                                 + reverse('posts:post_create'))
         self.assertRedirects(response, expected_redirect)
         self.assertEqual(Post.objects.count(), posts_before)
+
+
+class CommentFormTests(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.test_user = User.objects.create(
+            username='test_username',
+            email='testmail@gmail.com',
+            password='Qwerty123',
+        )
+        cls.guest_client = Client()
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.test_user)
+        cls.group = Group.objects.create(
+            title='Тестовый заголовок',
+            slug='test-group',
+            description='Тестовое описание',
+        )
+        cls.post = Post.objects.create(
+            author=cls.test_user,
+            group=cls.group,
+            text='Тестовый текст',
+        )
+
+    def test_comments_can_be_created_only_by_authorized_clients(self):
+        """Комментировать посты может только авторизованный пользователь."""
+        comments_before = Comment.objects.count()
+        form_data = {
+            'post': self.post,
+            'text': 'Тестовый комментарий к посту',
+            'author': self.guest_client,
+        }
+        response = self.guest_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.id, }),
+            data=form_data,
+            follow=True,
+        )
+        expected_redirect = str(reverse('users:login') + '?next='
+                                + reverse('posts:add_comment',
+                                          kwargs={'post_id': self.post.id, }))
+        self.assertRedirects(response, expected_redirect)
+        self.assertEqual(Comment.objects.count(), comments_before)
+        # response = self.authorized_client.post(
+        #     reverse('posts:add_comment', kwargs={'post_id': self.post.id, }),
+        #     data=form_data,
+        #     follow=True,
+        # )
+        # self.assertEqual(Comment.objects.count(), comments_before + 1)

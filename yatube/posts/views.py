@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from yatube.settings import ITEMS_PER_PAGE
 
-from .forms import PostForm
+from .forms import CommentForm, PostForm
 from .models import Group, Post, User
 
 
@@ -55,11 +55,15 @@ def profile(request, username):
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
+    comment_form = CommentForm()
+    comments = post.comments.all()
     count = post.author.posts.count()
     template = 'posts/post_detail.html'
     context = {
         'post': post,
         'count': count,
+        'comment_form': comment_form,
+        'comments': comments,
     }
     return render(request, template, context)
 
@@ -96,3 +100,15 @@ def post_edit(request, post_id):
         'is_edit': True,
     }
     return render(request, template, context)
+
+
+@login_required
+def add_comment(request, post_id):
+    post = Post.objects.get(id=post_id)
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.author = request.user
+        comment.post = post
+        comment.save()
+    return redirect('posts:post_detail', post_id=post_id)

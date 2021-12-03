@@ -102,7 +102,7 @@ class PostViewsTest(TestCase):
 
     # Проверка того, что пост не попал не в свою группу
     def test_new_post_does_not_appear_in_other_group(self):
-        """Новый пост не отображается не в свойе группе."""
+        """Новый пост не отображается не в своей группе."""
         other_group = Group.objects.create(
             title='Другой тестовый заголовок',
             slug='other-test-group',
