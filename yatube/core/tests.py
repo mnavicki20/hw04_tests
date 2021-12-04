@@ -3,7 +3,7 @@ from http import HTTPStatus
 from django.test import TestCase
 
 
-class ViewTestClass(TestCase):
+class CustomErrorTestClass(TestCase):
     def test_error_page(self):
         """Проверка кодов ответа и используемого шаблона несуществующей
         страницы."""
