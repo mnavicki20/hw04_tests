@@ -17,7 +17,8 @@ class PaginatorViewsTest(TestCase):
             email='testmail@gmail.com',
             password='Qwerty123',
         )
-        cls.guest_client = Client()
+        cls.authorized_client = Client()
+        cls.authorized_client.force_login(cls.test_user)
         cls.group = Group.objects.create(
             title='Тестовый заголовок',
             slug='test-group',
@@ -31,15 +32,23 @@ class PaginatorViewsTest(TestCase):
 
     def test_cache_on_index_page_works_correct(self):
         """Кэширование данных на главной странице работает корректно."""
-        response = self.guest_client.get(reverse('posts:index'))
+        response = self.authorized_client.get(reverse('posts:index'))
         cached_response_content = response.content
         Post.objects.create(
             author=self.test_user,
             group=self.group,
             text='Создаём вторую публикацию',
         )
-        response = self.guest_client.get(reverse('posts:index'))
-        self.assertEqual(cached_response_content, response.content)
+        response = self.authorized_client.get(reverse('posts:index'))
+        self.assertEqual(
+            cached_response_content,
+            response.content,
+            'Кэширование работает некорректно.'
+        )
         cache.clear()
-        response = self.guest_client.get(reverse('posts:index'))
-        self.assertNotEqual(cached_response_content, response.content)
+        response = self.authorized_client.get(reverse('posts:index'))
+        self.assertNotEqual(
+            cached_response_content,
+            response.content,
+            'Кэширование после очистки работает некорректно'
+        )
