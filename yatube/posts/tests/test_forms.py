@@ -73,7 +73,7 @@ class PostFormTests(TestCase):
         self.assertEqual(last_post.text, form_data['text'])
         self.assertEqual(last_post.group.id, form_data['group'])
         self.assertEqual(last_post.author, form_data['author'])
-        self.assertEqual(last_post.image, form_data['image'])
+        self.assertTrue(last_post.image, form_data['image'])
 
     def test_edit_post(self):
         """Отправка валидной формы редактирует публикацию."""
