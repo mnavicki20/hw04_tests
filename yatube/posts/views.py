@@ -20,7 +20,7 @@ def pagination(request, queryset):
     }
 
 
-@cache_page(60 * 20)
+@cache_page(20)
 def index(request):
     post_list = Post.objects.all()
     context = pagination(request, post_list)

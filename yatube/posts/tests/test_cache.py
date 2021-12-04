@@ -18,8 +18,6 @@ class PaginatorViewsTest(TestCase):
             password='Qwerty123',
         )
         cls.guest_client = Client()
-        cls.authorized_client = Client()
-        cls.authorized_client.force_login(cls.test_user)
         cls.group = Group.objects.create(
             title='Тестовый заголовок',
             slug='test-group',
