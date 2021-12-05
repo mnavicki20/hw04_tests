@@ -91,13 +91,13 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
-    # ссылка на объект пользователя, который подписывается
+    # кто подписывается
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='follower',
     )
-    # ссылка на объект пользователя, на которого подписываются
+    # на кого подписываются
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
